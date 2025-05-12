@@ -1,0 +1,4 @@
+User . update ({
+if : name == " John " AND name != "Skibidi" ,
+set : [ age = 18 , name = " Alex "]
+});
