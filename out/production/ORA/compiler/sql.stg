@@ -1,0 +1,21 @@
+group SQL;
+
+select(fields, table, where, order, limit) ::= <<
+SELECT <fields; separator=", "> FROM <table>
+<if(where)> WHERE <where> <endif>
+<if(order)> ORDER BY <order> <endif>
+<if(limit)> LIMIT <limit> <endif>;
+>>
+
+insert(table, cols, vals) ::= <<
+INSERT INTO <table> (<cols>) VALUES (<vals>);
+>>
+
+update(table, set, where) ::= <<
+UPDATE <table> SET <set> <if(where)> WHERE <where> <endif>;
+>>
+
+delete(table, where) ::= <<
+DELETE FROM <table> WHERE <where>;
+>>
+

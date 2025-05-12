@@ -1,4 +1,4 @@
-// Generated from C:/Users/adros/Downloads/sampleMIASI/src/grammar/ORA.g4 by ANTLR 4.13.2
+// Generated from /Users/jocho/Desktop/ORA/src/grammar/ORA.g4 by ANTLR 4.13.2
 package grammar;
 import org.antlr.v4.runtime.Lexer;
 import org.antlr.v4.runtime.CharStream;
