@@ -128,10 +128,14 @@ public class EmitVisitor extends ORABaseVisitor<String> {
             counter++;
         }
 
-        System.out.println(st.render());
         return st.render();
     }
 
+    @Override
+    public String visitQuery(ORAParser.QueryContext ctx) {
+        // the real statement is always the first child
+        return visit(ctx.getChild(0));
+    }
 
     @Override
     public String visitUpdateExpression(ORAParser.UpdateExpressionContext ctx) {

@@ -16,7 +16,7 @@ public class StartCompiler {
         CharStream inp = null;
 
         try {
-            inp = CharStreams.fromFileName("we.first");
+            inp = CharStreams.fromFileName("test.first");
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
@@ -34,7 +34,9 @@ public class StartCompiler {
         EmitVisitor em = new EmitVisitor(); //tu w środku nawiasów było group
         ParseTree tree = par.query();
         String res = em.visit(tree);
+
         System.out.println(res);
+        DBExecutor.execute(res);
         /*try {
             var wr = new FileWriter("wy.asm");
             wr.write(res.render());

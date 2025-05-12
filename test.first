@@ -1,0 +1,9 @@
+users . add ({
+username = " supa123 " ,
+email = "supa@example.com" ,
+password = "supaPass123",
+first_name = "Supa",
+last_name = "Test",
+age = 42,
+bio = "Here goes some description, supa..."
+});
