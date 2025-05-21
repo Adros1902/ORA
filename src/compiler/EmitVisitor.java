@@ -9,18 +9,39 @@ import java.util.*;
 
 public class EmitVisitor extends ORABaseVisitor<String> {
 
-    private STGroup group;
+    private final STGroup group;
 
     public EmitVisitor() {
         group = new STGroupFile("src/compiler/sql.stg");
     }
 
     @Override
+    public String visitQuery(ORAParser.QueryContext ctx) {
+        ORAParser.ExpressionContext exprCtx = ctx.expression();
+
+        if (exprCtx instanceof ORAParser.PickContext) {
+            return visit(((ORAParser.PickContext) exprCtx).pickExpression());
+        }
+        if (exprCtx instanceof ORAParser.AddContext) {
+            return visit(((ORAParser.AddContext) exprCtx).addExpression());
+        }
+        if (exprCtx instanceof ORAParser.UpdateContext) {
+            return visit(((ORAParser.UpdateContext) exprCtx).updateExpression());
+        }
+        if (exprCtx instanceof ORAParser.RemoveContext) {
+            return visit(((ORAParser.RemoveContext) exprCtx).removeExpression());
+        }
+
+        return null;
+    }
+
+
+    @Override
     public String visitPickExpression(ORAParser.PickExpressionContext ctx) {
 
         ST st = group.getInstanceOf("select");
 
-        ORAParser.PickParamsContext listOfParams = (ORAParser.PickParamsContext) ctx.pickParams();
+        ORAParser.PickParamsContext listOfParams = ctx.pickParams();
 
 
         for (ORAParser.PickParamContext p : listOfParams.pickParam()) {
@@ -42,7 +63,6 @@ public class EmitVisitor extends ORABaseVisitor<String> {
                 st.add("limit", limit);
             }
         }
-        System.out.println(st.render());
 
         return st.render();
     }
@@ -54,7 +74,7 @@ public class EmitVisitor extends ORABaseVisitor<String> {
 
     @Override
     public String visitCondition(ORAParser.ConditionContext ctx) {
-        String condition = "";
+        StringBuilder condition = new StringBuilder();
         List<ORAParser.ExpressionAtomContext> atoms = ctx.expressionAtom();
 
         for (int i = 0; i < atoms.size(); i++) {
@@ -71,15 +91,15 @@ public class EmitVisitor extends ORABaseVisitor<String> {
                 right = "'" + right.substring(1, right.length() - 1) + "'";
             }
 
-            condition = condition + left + " " + operator + " " + right;
+            condition.append(left).append(" ").append(operator).append(" ").append(right);
 
             if (i < atoms.size() - 1) {
                 String logicalOperator = ctx.getChild(i * 2 + 1).getText();
-                condition = condition + " " + logicalOperator + " ";
+                condition.append(" ").append(logicalOperator).append(" ");
             }
         }
 
-        return condition;
+        return condition.toString();
     }
 
 
@@ -107,7 +127,7 @@ public class EmitVisitor extends ORABaseVisitor<String> {
         ST st = group.getInstanceOf("insert");
 
         st.add("table", table);
-        ORAParser.AssignmentListContext list = (ORAParser.AssignmentListContext) ctx.assignmentList();
+        ORAParser.AssignmentListContext list = ctx.assignmentList();
         int counter = 0;
         for (ORAParser.AssignmentContext value : list.assignment()) {
             if (counter == 0) {
@@ -128,7 +148,6 @@ public class EmitVisitor extends ORABaseVisitor<String> {
             counter++;
         }
 
-        System.out.println(st.render());
         return st.render();
     }
 
@@ -140,7 +159,7 @@ public class EmitVisitor extends ORABaseVisitor<String> {
         ST st = group.getInstanceOf("update");
         st.add("table", table);
 
-        ORAParser.SetListContext list = (ORAParser.SetListContext) ctx.setList();
+        ORAParser.SetListContext list = ctx.setList();
         int counter = 0;
         for (ORAParser.AssignmentContext value : list.assignment()) {
             if (counter == 0) {
@@ -169,8 +188,6 @@ public class EmitVisitor extends ORABaseVisitor<String> {
         String condition = visit(ctx.condition());
         st.add("where", condition);
 
-
-        System.out.println(st.render());
         return st.render();
 
     }
@@ -185,7 +202,6 @@ public class EmitVisitor extends ORABaseVisitor<String> {
         String condition = visit(ctx.condition());
         st.add("where", condition);
 
-        System.out.println(st.render());
         return st.render();
     }
 

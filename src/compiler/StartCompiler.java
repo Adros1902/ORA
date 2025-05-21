@@ -9,6 +9,7 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.stringtemplate.v4.STGroup;
 import org.stringtemplate.v4.STGroupFile;
 
+import java.io.FileWriter;
 import java.io.IOException;
 
 public class StartCompiler {
@@ -31,17 +32,17 @@ public class StartCompiler {
 //        STGroup.trackCreationEvents = true;
         STGroup group = new STGroupFile("src/compiler/sql.stg");
 
-        EmitVisitor em = new EmitVisitor(); //tu w środku nawiasów było group
+        EmitVisitor em = new EmitVisitor();
         ParseTree tree = par.query();
         String res = em.visit(tree);
         System.out.println(res);
-        /*try {
-            var wr = new FileWriter("wy.asm");
-            wr.write(res.render());
+        try {
+            var wr = new FileWriter("wy.sql");
+            wr.write(res);
             wr.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
-        }*/
+        }
 //        res.inspect();
     }
 }
